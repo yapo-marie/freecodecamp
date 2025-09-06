@@ -24,6 +24,36 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+// Timestamp microservice endpoint
+app.get("/api/:date?", function (req, res) {
+  let dateParam = req.params.date;
+  let date;
+  
+  // If no date parameter provided, use current time
+  if (!dateParam) {
+    date = new Date();
+  } else {
+    // Check if the parameter is a Unix timestamp (all digits)
+    if (/^\d+$/.test(dateParam)) {
+      // Convert to number and create date
+      date = new Date(parseInt(dateParam));
+    } else {
+      // Try to parse as date string
+      date = new Date(dateParam);
+    }
+  }
+  
+  // Check if the date is valid
+  if (date.toString() === "Invalid Date") {
+    res.json({ error: "Invalid Date" });
+  } else {
+    res.json({
+      unix: date.getTime(),
+      utc: date.toUTCString()
+    });
+  }
+});
+
 
 
 // Listen on port set in environment variable or default to 3000
